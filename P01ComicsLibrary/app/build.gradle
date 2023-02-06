@@ -5,6 +5,10 @@ plugins {
     id 'com.google.dagger.hilt.android'
 }
 
+def apikeyPropertiesFile = rootProject.file("apikey.properties") //Class 8-3:35
+def apikeyProperties = new Properties()
+apikeyProperties.load(new FileInputStream(apikeyPropertiesFile))
+
 android {
     namespace 'com.example.p01comicslibrary'
     compileSdk 33
@@ -20,6 +24,9 @@ android {
         vectorDrawables {
             useSupportLibrary true
         }
+
+        buildConfigField("String", "MARVEL_KEY", apikeyProperties['MARVEL_KEY'])
+        buildConfigField("String", "MARVEL_SECRET", apikeyProperties['MARVEL_SECRET'])
     }
 
     buildTypes {
