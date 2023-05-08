@@ -35,6 +35,7 @@ class IgViewModel @Inject constructor(
                     addOnCompleteListener { task ->
                         if(task.isSuccessful) {
                             signedIn.value = true
+                            createOrUpdateProfile(username = username)
                         } else {
                             handleException(task.exception, "Signup failed")
                         }
@@ -46,6 +47,52 @@ class IgViewModel @Inject constructor(
             .addOnFailureListener {
 
             }
+    }
+
+    private fun createOrUpdateProfile(
+        name: String? = null,
+        username: String? = null,
+        bio: String? = null,
+        imageUrl: String? = null
+    ) {
+        val uid = auth.currentUser?.uid
+        val userData = UserData(
+            userId = uid,
+            name = name ?: userData.value?.name,
+            username = username ?: userData.value?.username,
+            bio = bio ?: userData.value?.bio,
+            imageUrl = imageUrl ?: userData.value?.imageUrl,
+            following = userData.value?.following
+        )
+
+        uid?.let { uid ->
+            inProgress.value = true
+            db.collection(USERS).document(uid).get()
+                .addOnSuccessListener {
+                    if (it.exists()) {
+                        it.reference.update(userData.toMap())
+                            .addOnSuccessListener {
+                                this.userData.value = userData
+                                inProgress.value = false
+                            }
+                            .addOnFailureListener {
+                                handleException(it, "Cannot update user")
+                                inProgress.value = false
+                            }
+                    } else {
+                        db.collection(USERS).document(uid).set(userData)
+                        getUserDate(uid)
+                        inProgress.value = false
+                    }
+                }
+                .addOnFailureListener { ext ->
+                    handleException(ext, "Cannot create user")
+            }
+        }
+    }
+
+    private fun getUserDate(uid: String) {
+
     }
 
     fun handleException(exception: Exception? = null, customMessage: String = "") {
