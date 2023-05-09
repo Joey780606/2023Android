@@ -6,6 +6,7 @@ import com.example.p02instgram.data.Event
 import com.example.p02instgram.data.UserData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -22,6 +23,15 @@ class IgViewModel @Inject constructor(
     val inProgress = mutableStateOf(false)
     val userData = mutableStateOf<UserData?>(null)
     val popupNotification = mutableStateOf<Event<String>?>(null)
+
+    init {
+        //auth.signOut()
+        val currentUser = auth.currentUser
+        signedIn.value = currentUser != null
+        currentUser?.uid?.let { uid ->
+            getUserData(uid)
+        }
+    }
 
     fun onSignup(username: String, email: String, pass: String) {
         inProgress.value = true
@@ -81,7 +91,7 @@ class IgViewModel @Inject constructor(
                             }
                     } else {
                         db.collection(USERS).document(uid).set(userData)
-                        getUserDate(uid)
+                        getUserData(uid)
                         inProgress.value = false
                     }
                 }
@@ -91,8 +101,18 @@ class IgViewModel @Inject constructor(
         }
     }
 
-    private fun getUserDate(uid: String) {
-
+    private fun getUserData(uid: String) {
+        inProgress.value = true
+        db.collection(USERS).document(uid).get()
+            .addOnSuccessListener {
+                val user = it.toObject<UserData>()
+                userData.value = user
+                inProgress.value = false
+                //popupNotification.value = Event("User data retrieved successfully") //Mark at 6:11
+            }
+            .addOnFailureListener { exc ->
+                handleException(exc, "Cannot retrieve user data")
+            }
     }
 
     fun handleException(exception: Exception? = null, customMessage: String = "") {
