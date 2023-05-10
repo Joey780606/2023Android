@@ -1,5 +1,6 @@
 package com.example.p02instgram.auth
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -23,6 +24,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.example.p02instgram.IgViewModel
 import com.example.p02instgram.R.drawable
+import com.example.p02instgram.main.CommonProgressSpinner
 
 @Composable
 fun SignupScreen(navController: NavController, vm: IgViewModel) {
@@ -87,6 +89,12 @@ fun SignupScreen(navController: NavController, vm: IgViewModel) {
                     .padding(8.dp)
                     .clickable {}
             )
+        }
+
+        val isLoading = vm.inProgress.value
+        //Log.i("Test", "isLoading:$isLoading")
+        if (isLoading) {
+            CommonProgressSpinner()
         }
     }
 }
