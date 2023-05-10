@@ -14,6 +14,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.example.p02instgram.auth.LoginScreen
 import com.example.p02instgram.auth.SignupScreen
 import com.example.p02instgram.ui.theme.P02InstgramTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -38,6 +39,7 @@ class MainActivity : ComponentActivity() {
 
 sealed class DestinationScreen(val route: String) {
     object Signup: DestinationScreen("signup")
+    object Login: DestinationScreen("login")
 }
 
 @Composable
@@ -48,6 +50,9 @@ fun InstagramApp() {
     NavHost(navController = navController, startDestination = DestinationScreen.Signup.route) {
         composable(DestinationScreen.Signup.route) {
             SignupScreen(navController = navController, vm = vm)
+        }
+        composable(DestinationScreen.Login.route) {
+            LoginScreen(navController = navController, vm = vm)
         }
     }
 }

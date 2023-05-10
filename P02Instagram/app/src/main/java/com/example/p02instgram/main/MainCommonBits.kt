@@ -15,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.navigation.NavController
+import com.example.p02instgram.DestinationScreen
 import com.example.p02instgram.IgViewModel
 
 @Composable
@@ -40,3 +42,11 @@ fun CommonProgressSpinner() {
         CircularProgressIndicator()
     }
 }
+
+fun navigateTo(navController: NavController, dest: DestinationScreen) {
+    navController.navigate(dest.route) {
+        popUpTo(dest.route)
+        launchSingleTop = true
+    }
+}
+
