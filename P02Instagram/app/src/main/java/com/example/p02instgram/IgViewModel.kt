@@ -1,5 +1,6 @@
 package com.example.p02instgram
 
+import android.util.Log
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import com.example.p02instgram.data.Event
@@ -25,7 +26,7 @@ class IgViewModel @Inject constructor(
     val popupNotification = mutableStateOf<Event<String>?>(null)
 
     init {
-        //auth.signOut()
+        auth.signOut()
         val currentUser = auth.currentUser
         signedIn.value = currentUser != null
         currentUser?.uid?.let { uid ->
@@ -34,6 +35,11 @@ class IgViewModel @Inject constructor(
     }
 
     fun onSignup(username: String, email: String, pass: String) {
+        if(username.isEmpty() or email.isEmpty() or pass.isEmpty()) {   // Avoid app crash
+            handleException(customMessage = "Please fill in all fields")
+            Log.e("Test", "Field is empty")
+            return
+        }
         inProgress.value = true
         db.collection(USERS).whereEqualTo("username", username).get()
             .addOnSuccessListener { document ->
@@ -59,6 +65,31 @@ class IgViewModel @Inject constructor(
             }
     }
 
+    fun onLogin(email: String, pass: String) {
+        if(email.isEmpty() or pass.isEmpty()) {   // Avoid app crash
+            handleException(customMessage = "Please fill in all fields")
+            return
+        }
+        inProgress.value = true
+        auth.signInWithEmailAndPassword(email, pass)
+            .addOnCompleteListener { task ->
+                if(task.isSuccessful) {
+                    signedIn.value = true
+                    inProgress.value = false
+                    auth.currentUser?.uid?.let { uid ->
+                        handleException(customMessage = "Login success")
+                        getUserData(uid)
+                    }
+                } else {
+                    handleException(task.exception, "Please fill in all fields")
+                    inProgress.value = false
+                }
+            }
+            .addOnFailureListener { exc ->
+                handleException(exc, "Login failed")
+                inProgress.value = false
+            }
+    }
     private fun createOrUpdateProfile(
         name: String? = null,
         username: String? = null,
