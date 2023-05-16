@@ -27,10 +27,13 @@ import com.example.p02instgram.IgViewModel
 import com.example.p02instgram.main.navigateTo
 
 import com.example.p02instgram.R
+import com.example.p02instgram.main.CheckSignedIn
 import com.example.p02instgram.main.CommonProgressSpinner
 
 @Composable
 fun LoginScreen(navController: NavController, vm:IgViewModel) {
+
+    CheckSignedIn(vm = vm, navController = navController)
 
     val focus = LocalFocusManager.current
 

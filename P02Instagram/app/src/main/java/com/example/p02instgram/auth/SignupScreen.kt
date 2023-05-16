@@ -26,11 +26,15 @@ import androidx.navigation.NavController
 import com.example.p02instgram.DestinationScreen
 import com.example.p02instgram.IgViewModel
 import com.example.p02instgram.R.drawable
+import com.example.p02instgram.main.CheckSignedIn
 import com.example.p02instgram.main.CommonProgressSpinner
 import com.example.p02instgram.main.navigateTo
 
 @Composable
 fun SignupScreen(navController: NavController, vm: IgViewModel) {
+
+    CheckSignedIn(vm = vm, navController = navController)
+
     val focus = LocalFocusManager.current
 
     Box(modifier = Modifier.fillMaxSize()) {

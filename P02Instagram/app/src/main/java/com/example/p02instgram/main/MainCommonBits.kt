@@ -10,6 +10,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -50,3 +52,15 @@ fun navigateTo(navController: NavController, dest: DestinationScreen) {
     }
 }
 
+@Composable
+fun CheckSignedIn(vm: IgViewModel, navController: NavController) {
+    // 作者不用 navigateTo 的目的,是希望跳到此頁後,將所有前面的頁數都清掉,而非存在back stack裡
+    val alreadyLoggedIn = remember { mutableStateOf(false) }
+    val signedIn = vm.signedIn.value
+    if(signedIn && !alreadyLoggedIn.value) {
+        alreadyLoggedIn.value = true
+        navController.navigate(DestinationScreen.Feed.route) {
+            popUpTo(0)
+        }
+    }
+}
