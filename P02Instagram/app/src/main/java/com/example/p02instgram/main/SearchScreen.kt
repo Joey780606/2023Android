@@ -1,6 +1,7 @@
 package com.example.p02instgram.main
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
@@ -10,11 +11,11 @@ import com.example.p02instgram.IgViewModel
 
 @Composable
 fun SearchScreen(navController: NavController, vm: IgViewModel) {
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.fillMaxSize()) {
         Column(modifier = Modifier.weight(1f)) {
             Text(text = "Search screen")
         }
+        BottomNavigationMenu(selectedItem = BottomNavigationItem.SEARCH,
+            navController = navController)
     }
-    BottomNavigationMenu(selectedItem = BottomNavigationItem.SEARCH,
-        navController = navController)
 }
