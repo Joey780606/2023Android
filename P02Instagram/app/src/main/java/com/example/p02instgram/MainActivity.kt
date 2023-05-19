@@ -15,6 +15,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.example.p02instgram.auth.LoginScreen
+import com.example.p02instgram.auth.ProfileScreen
 import com.example.p02instgram.auth.SignupScreen
 import com.example.p02instgram.main.FeedScreen
 import com.example.p02instgram.main.MyPostScreen
@@ -46,6 +47,7 @@ sealed class DestinationScreen(val route: String) {
     object Feed: DestinationScreen("feed")
     object Search: DestinationScreen("search")
     object MyPosts: DestinationScreen("myposts")
+    object Profile: DestinationScreen("profile")
 }
 
 @Composable
@@ -68,6 +70,9 @@ fun InstagramApp() {
         }
         composable(DestinationScreen.MyPosts.route) {
             MyPostScreen(navController = navController, vm = vm)
+        }
+        composable(DestinationScreen.Profile.route) {
+            ProfileScreen(navController = navController, vm = vm)
         }
     }
 }

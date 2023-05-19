@@ -22,6 +22,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.p02instgram.DestinationScreen
 import com.example.p02instgram.IgViewModel
 import com.example.p02instgram.R
 
@@ -66,7 +67,7 @@ fun MyPostScreen(navController: NavController, vm: IgViewModel) {
                 Text(text = userData?.bio ?: "")
             }
             OutlinedButton(
-                onClick = { },
+                onClick = { navigateTo(navController, DestinationScreen.Profile)},
                 modifier = Modifier
                     .padding(8.dp)
                     .fillMaxWidth(),
