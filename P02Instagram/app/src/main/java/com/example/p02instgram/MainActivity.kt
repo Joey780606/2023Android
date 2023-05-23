@@ -19,6 +19,7 @@ import com.example.p02instgram.auth.ProfileScreen
 import com.example.p02instgram.auth.SignupScreen
 import com.example.p02instgram.main.FeedScreen
 import com.example.p02instgram.main.MyPostScreen
+import com.example.p02instgram.main.NewPostScreen
 import com.example.p02instgram.main.SearchScreen
 import com.example.p02instgram.ui.theme.P02InstgramTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -48,6 +49,9 @@ sealed class DestinationScreen(val route: String) {
     object Search: DestinationScreen("search")
     object MyPosts: DestinationScreen("myposts")
     object Profile: DestinationScreen("profile")
+    object NewPost: DestinationScreen("newpost/{imageUri}") {
+        fun createRoute(uri: String) = "newpost/$uri"
+    }
 }
 
 @Composable
@@ -73,6 +77,12 @@ fun InstagramApp() {
         }
         composable(DestinationScreen.Profile.route) {
             ProfileScreen(navController = navController, vm = vm)
+        }
+        composable(DestinationScreen.NewPost.route) { navBackStackEntry ->
+            val imageUri = navBackStackEntry.arguments?.getString("imageUri")
+            imageUri?.let {
+                NewPostScreen(navController = navController, vm = vm, encodeUri = it)
+            }
         }
     }
 }
