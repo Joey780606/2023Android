@@ -1,5 +1,6 @@
 package com.example.p02instgram.main
 
+import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -51,7 +52,9 @@ fun NewPostScreen(navController: NavController, vm: IgViewModel, encodeUri: Stri
             Text(text = "Cancel", modifier = Modifier.clickable { navController.popBackStack() })
             Text(text = "Post", modifier = Modifier.clickable {
                 focusManager.clearFocus()
-                //Call the VM
+                vm.onNewPost(Uri.parse(imageUri), description) {
+                    navController.popBackStack()
+                }
             })
         }
 

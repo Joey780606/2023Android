@@ -6,6 +6,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import coil.compose.ImagePainter
 import com.example.p02instgram.data.Event
+import com.example.p02instgram.data.PostData
 import com.example.p02instgram.data.UserData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -16,6 +17,7 @@ import java.util.UUID
 import javax.inject.Inject
 
 const val USERS = "IgUsers"
+const val POSTS = "posts"
 
 @HiltViewModel
 class IgViewModel @Inject constructor(
@@ -190,5 +192,48 @@ class IgViewModel @Inject constructor(
         signedIn.value = false
         userData.value = null
         popupNotification.value = Event("Logged out")
+    }
+
+    fun onNewPost(uri: Uri, description: String, onPostSuccess: () -> Unit) {
+        uploadImage(uri) {
+            onCreatePost(it, description, onPostSuccess)
+        }
+    }
+
+    // 這裡就要注意Firebase, storage裡的rule設定
+    private fun onCreatePost(imageUri: Uri, description: String, onPostSuccess: () -> Unit) {
+        inProgress.value = true
+        val currentUid = auth.currentUser?.uid
+        val currentUsername = userData.value?.username
+        val currentUserImage = userData.value?.imageUrl
+
+        if(currentUid != null) {
+            val postUuid = UUID.randomUUID().toString()
+
+            val post = PostData(
+                postId = postUuid,
+                userId = currentUid,
+                username = currentUsername,
+                userImage = currentUserImage,
+                postImage = imageUri.toString(),
+                postDescription = description,
+                time = System.currentTimeMillis()
+            )
+
+            db.collection(POSTS).document(postUuid).set(post)
+                .addOnSuccessListener {
+                    popupNotification.value = Event("Post successfully created")
+                    inProgress.value = false
+                    onPostSuccess.invoke()
+                }
+                .addOnFailureListener { exc ->
+                    handleException(exc, "Unable to create post")
+                    inProgress.value = false
+                }
+        } else {
+            handleException(customMessage = "Error: username unavailable.  Unable to create post")
+            onLogout()
+            inProgress.value = false
+        }
     }
 }
