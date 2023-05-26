@@ -2,6 +2,7 @@ package com.example.p02instgram
 
 import android.net.Uri
 import android.util.Log
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import coil.compose.ImagePainter
@@ -10,6 +11,7 @@ import com.example.p02instgram.data.PostData
 import com.example.p02instgram.data.UserData
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.toObject
 import com.google.firebase.storage.FirebaseStorage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -30,6 +32,8 @@ class IgViewModel @Inject constructor(
     val userData = mutableStateOf<UserData?>(null)
     val popupNotification = mutableStateOf<Event<String>?>(null)
 
+    val refreshPostsProgress = mutableStateOf(false)
+    val posts = mutableStateOf<List<PostData>>(listOf())
     init {
         //auth.signOut()
         val currentUser = auth.currentUser
@@ -145,6 +149,7 @@ class IgViewModel @Inject constructor(
                 userData.value = user
                 inProgress.value = false
                 //popupNotification.value = Event("User data retrieved successfully") //Mark at 6:11
+                refreshPosts()
             }
             .addOnFailureListener { exc ->
                 handleException(exc, "Cannot retrieve user data")
@@ -224,6 +229,7 @@ class IgViewModel @Inject constructor(
                 .addOnSuccessListener {
                     popupNotification.value = Event("Post successfully created")
                     inProgress.value = false
+                    refreshPosts()
                     onPostSuccess.invoke()
                 }
                 .addOnFailureListener { exc ->
@@ -235,5 +241,31 @@ class IgViewModel @Inject constructor(
             onLogout()
             inProgress.value = false
         }
+    }
+
+    private fun refreshPosts() {
+        val currentUid = auth.currentUser?.uid
+        if (currentUid != null) {
+            refreshPostsProgress.value = true
+            db.collection(POSTS).whereEqualTo("userId", currentUid).get()
+                .addOnSuccessListener { document ->
+                    convertPosts(document, posts)
+                    refreshPostsProgress.value = false
+                }
+                .addOnFailureListener { exc ->
+                    handleException(exc, "Cannot fetch posts")
+                    refreshPostsProgress.value = false
+                }
+        }
+    }
+
+    private fun convertPosts(documents: QuerySnapshot, outState: MutableState<List<PostData>>) {
+        val newPosts = mutableListOf<PostData>()
+        documents.forEach { doc ->
+            val post = doc.toObject<PostData>()
+            newPosts.add(post)
+        }
+        val sortedPosts = newPosts.sortedByDescending { it.time }
+        outState.value = sortedPosts
     }
 }
