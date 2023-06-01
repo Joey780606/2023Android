@@ -10,6 +10,7 @@ import com.example.p02instgram.data.Event
 import com.example.p02instgram.data.PostData
 import com.example.p02instgram.data.UserData
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.QuerySnapshot
 import com.google.firebase.firestore.ktx.toObject
@@ -189,7 +190,33 @@ class IgViewModel @Inject constructor(
     fun uploadProfileImage(uri: Uri) {
         uploadImage(uri) {
             createOrUpdateProfile(imageUrl = it.toString())
+            updatePostUserImageData(it.toString())
         }
+    }
+
+    private fun updatePostUserImageData(imageUrl: String) {
+        val currentUid = auth.currentUser?.uid
+        db.collection(POSTS).whereEqualTo("userId", currentUid).get()
+            .addOnSuccessListener {
+                val posts = mutableStateOf<List<PostData>>(arrayListOf())
+                convertPosts(it, posts)
+                val refs = arrayListOf<DocumentReference>()
+                for(post in posts.value) {
+                    post.postId?.let { id ->
+                        refs.add(db.collection(POSTS).document(id))
+                    }
+                }
+                if(refs.isNotEmpty()) {
+                    db.runBatch { batch ->
+                        for (ref in refs) {
+                            batch.update(ref, "userImage", imageUrl)
+                        }
+                    }
+                        .addOnSuccessListener {
+                            refreshPosts()
+                        }
+                }
+            }
     }
 
     fun onLogout() {
@@ -222,7 +249,8 @@ class IgViewModel @Inject constructor(
                 userImage = currentUserImage,
                 postImage = imageUri.toString(),
                 postDescription = description,
-                time = System.currentTimeMillis()
+                time = System.currentTimeMillis(),
+                likes = listOf<String>()
             )
 
             db.collection(POSTS).document(postUuid).set(post)
