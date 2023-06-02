@@ -31,7 +31,7 @@ class IgViewModel @Inject constructor(
     val signedIn = mutableStateOf(false)
     val inProgress = mutableStateOf(false)
     val userData = mutableStateOf<UserData?>(null)
-    val popupNotification = mutableStateOf<Event<String>?>(null)
+    val popupNotification = mutableStateOf<Event<String>?>(null)    //Joey: 重要:寫法
 
     val refreshPostsProgress = mutableStateOf(false)
     val posts = mutableStateOf<List<PostData>>(listOf())

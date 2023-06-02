@@ -26,6 +26,13 @@ import com.example.p02instgram.main.SinglePostScreen
 import com.example.p02instgram.ui.theme.P02InstgramTheme
 import dagger.hilt.android.AndroidEntryPoint
 
+/*
+    Author: Joey
+    Reference: uDemy class
+      https://www.udemy.com/course/instagram_jetpack/learn/lecture/30041834#overview
+    Info:
+     1. 重要點請加: 重要
+ */
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
