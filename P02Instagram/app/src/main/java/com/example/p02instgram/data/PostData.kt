@@ -4,6 +4,7 @@ import android.content.res.AssetFileDescriptor
 import android.os.Parcel
 import android.os.Parcelable
 
+// 只要有修改,就把 Parcelable 後方拿掉,再 選擇 "Add parcelable implement",就會重長一次對應的
 data class PostData(
     val postId: String?= null,
     val userId: String? = null,
@@ -12,7 +13,8 @@ data class PostData(
     val postImage: String?= null,
     val postDescription: String?= null,
     val time: Long?= null,
-    val likes: List<String>? = null
+    val likes: List<String>? = null,
+    val searchTerms: List<String>? = null
 ): Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
@@ -22,6 +24,7 @@ data class PostData(
         parcel.readString(),
         parcel.readString(),
         parcel.readValue(Long::class.java.classLoader) as? Long,
+        parcel.createStringArrayList(),
         parcel.createStringArrayList()
     ) {
     }
@@ -35,6 +38,7 @@ data class PostData(
         parcel.writeString(postDescription)
         parcel.writeValue(time)
         parcel.writeStringList(likes)
+        parcel.writeStringList(searchTerms)
     }
 
     override fun describeContents(): Int {
