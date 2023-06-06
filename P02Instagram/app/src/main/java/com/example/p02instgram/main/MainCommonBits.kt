@@ -47,11 +47,11 @@ fun CommonProgressSpinner() {
             .alpha(0.5f)
             .background(Color.LightGray)
             .clickable(enabled = false) {}
-            .fillMaxWidth(),
+            .fillMaxSize(),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically
     ) {
-        CircularProgressIndicator()
+        CircularProgressIndicator() //這是官方material的function
     }
 }
 
