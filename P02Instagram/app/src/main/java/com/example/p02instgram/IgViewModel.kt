@@ -310,6 +310,7 @@ class IgViewModel @Inject constructor(
             newPosts.add(post)
         }
         val sortedPosts = newPosts.sortedByDescending { it.time }
+        Log.e("Test", "sortedInfo size=" + sortedPosts.size)
         outState.value = sortedPosts
     }
 
