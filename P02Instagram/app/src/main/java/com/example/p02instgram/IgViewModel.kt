@@ -45,7 +45,7 @@ class IgViewModel @Inject constructor(
     val postsFeedProgress = mutableStateOf(false)
 
     val comments = mutableStateOf<List<CommentData>>(listOf())
-    val commentProgress = mutableStateOf(false)
+    val commentsProgress = mutableStateOf(false)
 
     init {
         //auth.signOut()
@@ -429,11 +429,30 @@ class IgViewModel @Inject constructor(
             )
             db.collection(COMMENTS).document(commentId).set(comment)
                 .addOnSuccessListener {
-                    // get existing comments
+                    getComments(postId)
                 }
                 .addOnFailureListener { exc ->
                     handleException(exc, "Cannot create comment.")
                 }
         }
+    }
+
+    fun getComments(postId: String) {
+        commentsProgress.value = true
+        db.collection(COMMENTS).whereEqualTo("postId", postId).get()
+            .addOnSuccessListener { documents ->
+                val newComments = mutableListOf<CommentData>()
+                documents.forEach { doc ->
+                    val comment = doc.toObject<CommentData>()
+                    newComments.add(comment)
+                }
+                val sortedComments = newComments.sortedByDescending { it.timestamp }
+                comments.value = sortedComments
+                commentsProgress.value = false
+            }
+            .addOnFailureListener { exc ->
+                handleException(exc, "Cannot retrieve comments")
+                commentsProgress.value = false
+            }
     }
 }

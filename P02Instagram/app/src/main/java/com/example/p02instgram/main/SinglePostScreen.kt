@@ -15,6 +15,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Card
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -32,25 +33,44 @@ import com.example.p02instgram.data.PostData
 
 @Composable
 fun SinglePostScreen(navController: NavController, vm: IgViewModel, post: PostData) {
+    val comments = vm.comments.value
+
+    LaunchedEffect(key1 = Unit) {
+        post.postId?.let { vm.getComments(it) }
+    }
     post.userId?.let {
-        Column(modifier = Modifier
-            .fillMaxWidth()
-            .wrapContentHeight()
-            .padding(8.dp)) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .wrapContentHeight()
+                .padding(8.dp)
+        ) {
             Text(text = "Back", modifier = Modifier.clickable { navController.popBackStack() })
 
             CommonDivider()
-            SinglePostDisplay(navController = navController, vm = vm, post = post)
+            SinglePostDisplay(
+                navController = navController,
+                vm = vm,
+                post = post,
+                nbComments = comments.size
+            )
         }
     }
 }
 
 @Composable
-fun SinglePostDisplay(navController: NavController, vm: IgViewModel, post: PostData) {
+fun SinglePostDisplay(
+    navController: NavController,
+    vm: IgViewModel,
+    post: PostData,
+    nbComments: Int
+) {
     val userData = vm.userData.value
-    Box(modifier = Modifier
-        .fillMaxWidth()
-        .height(48.dp)) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(48.dp)
+    ) {
         Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
             Card(
                 shape = CircleShape, modifier = Modifier
@@ -65,7 +85,7 @@ fun SinglePostDisplay(navController: NavController, vm: IgViewModel, post: PostD
                 Text(text = post.username ?: "")
                 Text(text = ",", modifier = Modifier.padding(8.dp))
 
-                if(userData?.userId == post.userId) {
+                if (userData?.userId == post.userId) {
                     // Current user's post.  Don't show anything
                 } else if (userData?.following?.contains(post.userId) == true) {
                     Text(
@@ -86,7 +106,8 @@ fun SinglePostDisplay(navController: NavController, vm: IgViewModel, post: PostD
         val modifier = Modifier
             .fillMaxWidth()
             .defaultMinSize(minHeight = 150.dp)
-        CommonImage(data = post.postImage,
+        CommonImage(
+            data = post.postImage,
             modifier = modifier,
             contentScale = ContentScale.FillWidth
         )
@@ -109,9 +130,12 @@ fun SinglePostDisplay(navController: NavController, vm: IgViewModel, post: PostD
     }
 
     Row(modifier = Modifier.padding(8.dp)) {
-        Text(text = "10 comments", color = Color.Gray, modifier = Modifier.padding(start = 8.dp)
-            .clickable { post.postId?.let {
-                navController.navigate(DestinationScreen.CommentsScreen.createRoue(it))
-            } })
+        Text(text = "$nbComments comments", color = Color.Gray, modifier = Modifier
+            .padding(start = 8.dp)
+            .clickable {
+                post.postId?.let {
+                    navController.navigate(DestinationScreen.CommentsScreen.createRoue(it))
+                }
+            })
     }
 }
