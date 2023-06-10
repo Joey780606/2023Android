@@ -18,6 +18,7 @@ import com.example.p02instgram.auth.LoginScreen
 import com.example.p02instgram.auth.ProfileScreen
 import com.example.p02instgram.auth.SignupScreen
 import com.example.p02instgram.data.PostData
+import com.example.p02instgram.main.CommentsScreen
 import com.example.p02instgram.main.FeedScreen
 import com.example.p02instgram.main.MyPostScreen
 import com.example.p02instgram.main.NewPostScreen
@@ -62,6 +63,9 @@ sealed class DestinationScreen(val route: String) {
         fun createRoute(uri: String) = "newpost/$uri"
     }
     object SinglePost: DestinationScreen("singlepgst")
+    object CommentsScreen : DestinationScreen("comments/{postId}") {
+        fun createRoue(postId: String) = "comments/$postId"
+    }
 }
 
 @Composable
@@ -98,6 +102,16 @@ fun InstagramApp() {
             val postData = navController.previousBackStackEntry?.arguments?.getParcelable<PostData>("post")
             postData?.let {
                 SinglePostScreen(navController = navController, vm = vm, post = postData)
+            }
+        }
+        composable(DestinationScreen.CommentsScreen.route) { navBackStackEntry ->
+            val postId = navBackStackEntry.arguments?.getString("postId")
+            postId?.let {
+                CommentsScreen(
+                    navController = navController,
+                    vm = vm,
+                    postId = it
+                )
             }
         }
     }

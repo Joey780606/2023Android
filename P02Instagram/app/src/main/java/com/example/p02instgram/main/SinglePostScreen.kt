@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.compose.rememberImagePainter
+import com.example.p02instgram.DestinationScreen
 import com.example.p02instgram.IgViewModel
 import com.example.p02instgram.R
 import com.example.p02instgram.data.PostData
@@ -108,6 +109,9 @@ fun SinglePostDisplay(navController: NavController, vm: IgViewModel, post: PostD
     }
 
     Row(modifier = Modifier.padding(8.dp)) {
-        Text(text = "10 comments", color = Color.Gray, modifier = Modifier.padding(start = 8.dp))
+        Text(text = "10 comments", color = Color.Gray, modifier = Modifier.padding(start = 8.dp)
+            .clickable { post.postId?.let {
+                navController.navigate(DestinationScreen.CommentsScreen.createRoue(it))
+            } })
     }
 }
