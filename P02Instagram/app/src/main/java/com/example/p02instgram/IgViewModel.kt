@@ -447,6 +447,7 @@ class IgViewModel @Inject constructor(
                     newComments.add(comment)
                 }
                 val sortedComments = newComments.sortedByDescending { it.timestamp }
+                //val sortedComments = newComments.sortedBy { it.timestamp }    // 這是另一個效果
                 comments.value = sortedComments
                 commentsProgress.value = false
             }
