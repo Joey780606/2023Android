@@ -6,6 +6,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import coil.compose.ImagePainter
+import com.example.p02instgram.data.CommentData
 import com.example.p02instgram.data.Event
 import com.example.p02instgram.data.PostData
 import com.example.p02instgram.data.UserData
@@ -21,6 +22,7 @@ import javax.inject.Inject
 
 const val USERS = "IgUsers"
 const val POSTS = "posts"
+const val COMMENTS = "comments"
 
 @HiltViewModel
 class IgViewModel @Inject constructor(
@@ -41,6 +43,9 @@ class IgViewModel @Inject constructor(
 
     val postsFeed = mutableStateOf<List<PostData>>(listOf())
     val postsFeedProgress = mutableStateOf(false)
+
+    val comments = mutableStateOf<List<CommentData>>(listOf())
+    val commentProgress = mutableStateOf(false)
 
     init {
         //auth.signOut()
@@ -234,6 +239,7 @@ class IgViewModel @Inject constructor(
         popupNotification.value = Event("Logged out")
         searchedPosts.value = listOf()
         postsFeed.value = listOf()
+        comments.value = listOf()
     }
 
     fun onNewPost(uri: Uri, description: String, onPostSuccess: () -> Unit) {
@@ -408,6 +414,26 @@ class IgViewModel @Inject constructor(
                         }
                 }
             }
+        }
+    }
+
+    fun createComment(postId: String, text: String) {
+        userData.value?.username?.let { username ->
+            val commentId = UUID.randomUUID().toString()
+            val comment = CommentData(
+                commentId = commentId,
+                postId = postId,
+                username = username,
+                text = text,
+                timestamp = System.currentTimeMillis()
+            )
+            db.collection(COMMENTS).document(commentId).set(comment)
+                .addOnSuccessListener {
+                    // get existing comments
+                }
+                .addOnFailureListener { exc ->
+                    handleException(exc, "Cannot create comment.")
+                }
         }
     }
 }
