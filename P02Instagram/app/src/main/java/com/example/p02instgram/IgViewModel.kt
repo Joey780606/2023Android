@@ -47,6 +47,8 @@ class IgViewModel @Inject constructor(
     val comments = mutableStateOf<List<CommentData>>(listOf())
     val commentsProgress = mutableStateOf(false)
 
+    val followers = mutableStateOf(0)
+
     init {
         //auth.signOut()
         val currentUser = auth.currentUser
@@ -164,6 +166,7 @@ class IgViewModel @Inject constructor(
                 //popupNotification.value = Event("User data retrieved successfully") //Mark at 6:11
                 refreshPosts()
                 getPersonalizeFeed()
+                user?.userId?.let { it1 -> getFolloweres(it1) }
             }
             .addOnFailureListener { exc ->
                 handleException(exc, "Cannot retrieve user data")
@@ -454,6 +457,13 @@ class IgViewModel @Inject constructor(
             .addOnFailureListener { exc ->
                 handleException(exc, "Cannot retrieve comments")
                 commentsProgress.value = false
+            }
+    }
+
+    private fun getFolloweres(uid: String) {
+        db.collection(USERS).whereArrayContains("following", uid?:"").get()
+            .addOnSuccessListener { documents ->
+                followers.value = documents.size()
             }
     }
 }

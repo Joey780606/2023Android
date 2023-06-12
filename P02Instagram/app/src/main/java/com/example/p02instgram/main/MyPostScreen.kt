@@ -18,6 +18,7 @@ import androidx.compose.material.Card
 import androidx.compose.material.OutlinedButton
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -51,6 +52,8 @@ fun MyPostScreen(navController: NavController, vm: IgViewModel) {
     val postsLoading = vm.refreshPostsProgress.value
     val posts = vm.posts.value
 
+    val followers = vm.followers.value
+
     Column {
         Column(modifier = Modifier.weight(1f)) {
             Row {
@@ -59,21 +62,21 @@ fun MyPostScreen(navController: NavController, vm: IgViewModel) {
                 }
 
                 Text(
-                    text = "15\nposts",
+                    text = "${posts.size}\nposts",
                     modifier = Modifier
                         .weight(1f)
                         .align(Alignment.CenterVertically),
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = "54\nfollowers",
+                    text = "$followers\nfollowers",
                     modifier = Modifier
                         .weight(1f)
                         .align(Alignment.CenterVertically),
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    text = "93\nfollowing",
+                    text = "${userData?.following?.size ?: 0}\nfollowing",
                     modifier = Modifier
                         .weight(1f)
                         .align(Alignment.CenterVertically),
