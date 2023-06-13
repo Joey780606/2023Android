@@ -32,7 +32,7 @@ class IgViewModel @Inject constructor(
 ): ViewModel() {
     val signedIn = mutableStateOf(false)
     val inProgress = mutableStateOf(false)
-    val userData = mutableStateOf<UserData?>(null)
+    val userData = mutableStateOf<UserData?>(null)  //Joey: 重要,可為null的後面就會加問號
     val popupNotification = mutableStateOf<Event<String>?>(null)    //Joey: 重要:寫法
 
     val refreshPostsProgress = mutableStateOf(false)

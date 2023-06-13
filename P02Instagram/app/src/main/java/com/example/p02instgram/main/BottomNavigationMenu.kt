@@ -15,8 +15,8 @@ import androidx.navigation.NavController
 import com.example.p02instgram.DestinationScreen    // 在MainActivity.kt 裡面
 import com.example.p02instgram.R
 
-enum class BottomNavigationItem(val icon: Int, val navDestination: DestinationScreen) {
-    FEED(R.drawable.ic_home, DestinationScreen.Feed),
+enum class BottomNavigationItem(val icon: Int, val navDestination: DestinationScreen) { //重要
+    FEED(R.drawable.ic_home, DestinationScreen.Feed),   //這表示enum的第一項,下面是第二與第三項
     SEARCH(R.drawable.ic_search, DestinationScreen.Search),
     POSTS(R.drawable.ic_posts, DestinationScreen.MyPosts)
 }
@@ -38,9 +38,9 @@ fun BottomNavigationMenu(selectedItem: BottomNavigationItem, navController: NavC
                     .padding(5.dp)
                     .weight(1f)
                     .clickable {
-                        navigateTo(navController, item.navDestination)
+                        navigateTo(navController, item.navDestination)  //這個很重要
                     },
-                colorFilter = if (item == selectedItem) ColorFilter.tint(Color.Black)
+                colorFilter = if (item == selectedItem) ColorFilter.tint(Color.Black)   //ColorFilter.tint 小技巧
                 else ColorFilter.tint(Color.Gray)
             )
         }

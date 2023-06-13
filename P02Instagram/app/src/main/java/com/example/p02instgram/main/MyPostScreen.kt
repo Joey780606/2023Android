@@ -84,7 +84,7 @@ fun MyPostScreen(navController: NavController, vm: IgViewModel) {
                 )
             }
             Column(modifier = Modifier.padding(8.dp)) {
-                val usernameDisplay = if (userData?.username == null) "" else "@${userData?.username}"
+                val usernameDisplay = if (userData?.username == null) "" else "@${userData?.username}" // @$ 重要,不知是什麼?
                 Text(text = userData?.name ?: "", fontWeight = FontWeight.Bold)
                 Text(text = usernameDisplay)
                 Text(text = userData?.bio ?: "")
@@ -107,7 +107,7 @@ fun MyPostScreen(navController: NavController, vm: IgViewModel) {
             //Column(modifier = Modifier.weight(1f)) {
             //    Text(text = "Posts list")
             //}
-            PostList(
+            PostList(   //在程式下方
                 isContextLoading = isLoading,
                 postsLoading = postsLoading,
                 posts = posts,
