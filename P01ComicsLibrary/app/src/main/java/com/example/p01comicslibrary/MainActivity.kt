@@ -20,6 +20,7 @@ import com.example.p01comicslibrary.view.CharacterDefaultScreen
 import com.example.p01comicslibrary.view.CharactersBottomNav
 import com.example.p01comicslibrary.view.CollectionScreen
 import com.example.p01comicslibrary.view.LibraryScreen
+import com.example.p01comicslibrary.viewmodel.CollectionDbViewModel
 import com.example.p01comicslibrary.viewmodel.LibraryApiViewModel
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -34,6 +35,7 @@ sealed class Destination(val route: String) {
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     private val lvm by viewModels<LibraryApiViewModel>()
+    private val cvm by viewModels<CollectionDbViewModel>()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -41,7 +43,7 @@ class MainActivity : ComponentActivity() {
                 // A surface container using the 'background' color from the theme
                 Surface(modifier = Modifier.fillMaxSize(), color = MaterialTheme.colors.background) {
                     val navController = rememberNavController()
-                    CharactersScaffold(navController = navController, lvm) // CharactersScaffold是一個composable
+                    CharactersScaffold(navController = navController, lvm, cvm) // CharactersScaffold是一個composable
                 }
             }
         }
@@ -49,7 +51,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun CharactersScaffold(navController: NavHostController, lvm: LibraryApiViewModel) {
+fun CharactersScaffold(navController: NavHostController, lvm: LibraryApiViewModel, cvm: CollectionDbViewModel) {
     val scaffoldState = rememberScaffoldState()
     val ctx = LocalContext.current
 
@@ -70,7 +72,12 @@ fun CharactersScaffold(navController: NavHostController, lvm: LibraryApiViewMode
                     Toast.makeText(ctx, "Character id is required", Toast.LENGTH_SHORT).show()
                 else {
                     lvm.retrieveSingleCharacter(id)
-                    CharacterDefaultScreen(lvm = lvm, paddingValues = paddingValues, navController = navController)
+                    CharacterDefaultScreen(
+                        lvm = lvm,
+                        cvm = cvm,
+                        paddingValues = paddingValues,
+                        navController = navController
+                    )
                 }
             }
         }
