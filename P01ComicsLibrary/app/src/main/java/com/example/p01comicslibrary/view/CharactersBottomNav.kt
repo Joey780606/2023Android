@@ -14,7 +14,7 @@ import com.example.p01comicslibrary.R
 
 @Composable
 fun CharactersBottomNav(navController: NavHostController) {
-    BottomNavigation(elevation = 5.dp) {
+    BottomNavigation(elevation = 5.dp) { //重要,官方程式
         val navBackStackEntry = navController.currentBackStackEntryAsState()
         val currentDestination = navBackStackEntry.value?.destination
 

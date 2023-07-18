@@ -64,7 +64,7 @@ fun CharactersScaffold(navController: NavHostController, lvm: LibraryApiViewMode
                 LibraryScreen(navController, lvm, paddingValues)
             }
             composable(Destination.Collection.route) {
-                CollectionScreen()
+                CollectionScreen(cvm, navController)
             }
             composable(Destination.CharacterDetail.route) { navBackStackEntry ->
                 val id = navBackStackEntry.arguments?.getString("characterId")?.toIntOrNull()
